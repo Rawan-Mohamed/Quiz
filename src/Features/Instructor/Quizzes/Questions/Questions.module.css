@@ -1,0 +1,11 @@
+.actionsCell {
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflowed content */
+    text-overflow: ellipsis; /* Show ellipsis for overflowed content */
+  }
+
+  /* Add this to make the actions buttons flex */
+  .actionsButtons {
+    display: flex;
+    justify-content: space-around;
+  }

@@ -1,0 +1,42 @@
+.card {
+  /* padding: 1rem; */
+  border-radius: 10px;
+  border: 1px solid gray;
+  margin-bottom: 1rem;
+  min-width: 400px;
+}
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.img-card {
+  background-color: var(--second-color);
+
+  padding: 1rem;
+  border-radius: 10px;
+}
+.img-card img {
+  width: 5rem;
+}
+.card-details {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.card-open {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+}
+.opan-icon {
+  padding-left: 5px;
+  color: var(--main-color);
+}
+
+.custom-width-card {
+  width: 300px; /* Adjust the width as needed */
+  /* Add any additional styles for the custom width */
+}

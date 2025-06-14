@@ -1,0 +1,17 @@
+.left, .right{
+    border: 1px solid gray;
+    border-radius: 10px;
+    padding: 1rem;
+}
+.details{
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.icon-toright{
+    font-size: 14px;
+    font-weight: bold;
+    padding-left: 10px;
+    color: var(--main-color);
+}

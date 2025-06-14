@@ -1,0 +1,77 @@
+/* .bg-sidbar{
+height: 100vh;
+background-color: red;
+}
+*/
+.bg-sidbar{
+ /* background-color: #fff !important; */
+ transition: all .7s ease-in-out;
+
+}
+
+/**sidbar bg*/
+.css-dip3t8{
+  background-color: #fff !important;
+}
+.bg-icon{
+    background-color: var(--second-color);
+    padding: .8rem;
+    border-radius: 10px;
+}
+
+.bg-menu-item{
+   padding: 1rem;
+   border-bottom: 1px solid gray;
+}
+/* .bg-menu-item::after{
+  content:"";
+  width: 10px;
+  height: 5px;
+  background-color: blue;
+} */
+
+.bg-menu-item:hover .bg-icon{
+  background-color: black;
+  color: var(--second-color);
+  transition: all .7s ease-in-out;
+}
+.ps-menu-button{
+  padding: 1rem !important;
+}
+.bg-menu-item:hover {
+  /* background-color: #13395e;  */
+  border-right: 3px solid black;
+}
+
+/* .sidebar-cont{
+    background-color: #1f263e;
+    border-radius: 0 4rem 0 0 ;
+  }
+  .sidebar-container .ps-sidebar-container{
+    background-color: #1f263e;
+    color: #fff;
+    height: 100vh;
+    border-radius: 0 4rem 0 0 ;
+  }
+  .sidebar-container .ps-sidebar-container .ps-menu-button:hover{
+    background-color: rgba(47,140,51,0.7);
+  } */
+
+
+  .bold-and-large {
+    font-weight: bold;
+    font-size: 1.5rem;
+
+  }
+
+  .css-1t8x7v1 >.ps-menu-button{
+    padding-right: 0;
+  }
+  /* .css-1t8x7v1 >.ps-menu-button:hover::after{ */
+  /* .css-1t8x7v1 >.ps-menu-button::after{
+
+content:"";
+width: 10px;
+height: 5px;
+background-color: blue;
+  } */

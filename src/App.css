@@ -1,0 +1,65 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-family: 'Nunito', sans-serif;
+  /* transition: all .7s ease-in-out; */
+}
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Add this if you want to allow vertical scrolling if needed */
+body {
+  overflow-y: auto;
+}
+
+:root {
+  --main-color: #c5d86d;
+  --second-color: #ffeddf;
+}
+.loader {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  background-image:
+    linear-gradient(#b89717 16px, transparent 0) ,
+    linear-gradient(#000 16px, transparent 0) ,
+    linear-gradient(#000 16px, transparent 0) ,
+    linear-gradient(#d3ad14 16px, transparent 0);
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  background-position: left top , left bottom , right top , right bottom;
+  animation: rotate 1s linear infinite;
+  z-index: 999;
+}
+@keyframes rotate {
+  0% {
+    width: 64px;
+    height: 64px;
+    transform: rotate(0deg)
+  }
+  50% {
+    width: 30px;
+    height: 30px;
+    transform: rotate(180deg)
+  }
+  100% {
+    width: 64px;
+    height: 64px;
+    transform: rotate(360deg)
+  }
+}
+.centered {
+  width: 64px;
+  height: 64px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* transform: translate(-50%, -50%);
+  transform: -webkit-translate(-50%, -50%);
+  transform: -moz-translate(-50%, -50%);
+  transform: -ms-translate(-50%, -50%); */
+}
