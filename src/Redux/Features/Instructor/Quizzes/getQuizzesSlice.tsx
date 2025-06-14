@@ -3,13 +3,27 @@ import {  quizzesUrl, requestHeaders } from "../../../../Services/api";
 import axios from "axios";
 
 
+export interface Quiz {
+  _id: string;
+  title: string;
+  description?: string;
+  group?: string;
+  questions_number?: number;
+  difficulty?: string;
+  type?: string;
+  schadule?: string;
+  duration?: number;
+  score_per_question?: number;
+  tags?: string[];
+}
+
 export interface Props {
-  data: [];
+  data: Quiz[];
   loading: boolean;
   error: null | string;
 }
 
-export const fetchQuizzesData = createAsyncThunk<any, void>(
+export const fetchQuizzesData = createAsyncThunk<Quiz[], void>(
   "QuizzesData/fetchQuizzesData",
   async () => {
     // eslint-disable-next-line no-useless-catch
@@ -19,7 +33,7 @@ export const fetchQuizzesData = createAsyncThunk<any, void>(
 
 
       });
-      return data.data;
+      return data.data as Quiz[];
 
 
     } catch (error) {
@@ -45,8 +59,8 @@ export const getQuizzesSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(
-        fetchQuizzesData.fulfilled,
-      (state, action: PayloadAction<any>) => {
+      fetchQuizzesData.fulfilled,
+      (state, action: PayloadAction<Quiz[]>) => {
         state.loading = false;
         state.data = action.payload;
         // state.data = true;
@@ -54,9 +68,9 @@ export const getQuizzesSlice = createSlice({
 
       }
     );
-    builder.addCase(fetchQuizzesData.rejected, (state, action: PayloadAction<any>) => {
+    builder.addCase(fetchQuizzesData.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload.message;
+      state.error = (action.error as any)?.message || 'Failed to fetch quizzes';
     });
   },
 });

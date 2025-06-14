@@ -15,8 +15,9 @@ import style from './Questions.module.css'
 import { Link } from 'react-router-dom';
 const Questions = () => {
     const dispatch = useDispatch();
-    const { data, loading, error } = useSelector((state) => state.questionsData) || {};
-    const detailsState = useSelector((state) => state.questionsDetails);
+    // Add types for useSelector state
+    const { data, loading, error } = useSelector((state: any) => state.questionsData) || {};
+    const detailsState = useSelector((state: any) => state.questionsDetails);
     const { details } = detailsState;
     // Dispatch the async action when your component mounts
     // console.log(data);
@@ -25,14 +26,14 @@ const Questions = () => {
         dispatch(QuestionsData());
     }, [dispatch]);
 
-    const { creating } = useSelector((state) => state.createQuestionData);
-    const { updating, error: updateError } = useSelector((state) => state.updateQuestionData);
+    const { creating } = useSelector((state: any) => state.createQuestionData);
+    const { updating, error: updateError } = useSelector((state: any) => state.updateQuestionData);
 
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
 
 
     // Add Question
-    const handleCreateQuestion = async (newQuestionData) => {
+    const handleCreateQuestion = async (newQuestionData: any) => {
         try {
             //note --- get options and type from the form data
             const { options, type, ...rest } = newQuestionData;
@@ -40,18 +41,18 @@ const Questions = () => {
             //note --- payload with the correct structure of Question
             const payload = {
                 ...rest,
-                options: {
+                options: type === 'MCQ' ? {
                     A: options.A,
                     B: options.B,
                     C: options.C,
                     D: options.D,
-                },
+                } : type === 'TRUE_FALSE' ? { True: 'True', False: 'False' } : {},
                 type,
+                tags: newQuestionData.tags ? newQuestionData.tags.split(',').map((tag: string) => tag.trim()) : [],
             };
-
-            await dispatch(createQuestion(payload));
+            await dispatch<any>(createQuestion(payload));
             closeModal();
-            dispatch(QuestionsData());
+            dispatch<any>(QuestionsData());
             // Optionally, you can handle success here
         } catch (error) {
             // Handle error
@@ -65,9 +66,9 @@ const Questions = () => {
 
             // Ensure questionId is defined before dispatching
             if (questionId !== undefined) {
-                await dispatch(updateQuestionAnswer({ questionId, newAnswer: updatedAnswer }));
+                await dispatch<any>(updateQuestionAnswer({ questionId, newAnswer: updatedAnswer }));
                 // Optionally, you can handle success here
-                dispatch(QuestionsData());
+                dispatch<any>(QuestionsData());
                 closeModal();
             } else {
                 throw new Error("questionId is undefined");
@@ -78,7 +79,7 @@ const Questions = () => {
         }
     };
     // Delete Question
-    const handleDeleteQuestion = async (question) => {
+    const handleDeleteQuestion = async (question: any) => {
         console.log("Question object:", question);
         try {
             await dispatch(deleteQuestion(questionId));
@@ -91,7 +92,7 @@ const Questions = () => {
         }
     };
     // Get the Details of Question
-    const handleDetailsQuestion = async (question) => {
+    const handleDetailsQuestion = async (question: any) => {
         console.log("Question object:", question);
         try {
             // Dispatch the action to get question details
@@ -109,6 +110,10 @@ const Questions = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState('add'); // 'add' or 'update'
     const [questionId, setQuestionId] = useState(0);
+    // Add a state to track selected type
+    const [selectedType, setSelectedType] = useState('MCQ');
+    // Add state for search
+    const [searchTerm, setSearchTerm] = useState('');
 
 
     //Modal --- Add Questions
@@ -118,7 +123,7 @@ const Questions = () => {
     };
 
     //Modal --- Upadte the Answer
-    const openUpdateModal = (question) => {
+    const openUpdateModal = (question: any) => {
         setModalType('update');
 
         // Check if question._id exists before setting the value
@@ -131,7 +136,7 @@ const Questions = () => {
         }
     };
     //Modal --- Delete Question
-    const openDeleteModal = (question) => {
+    const openDeleteModal = (question: any) => {
         setModalType('delete');
         // setQuestionId(question._id);
         // setIsModalOpen(true);
@@ -144,7 +149,7 @@ const Questions = () => {
         }
     };
     //Modal --- Detials
-    const openDetailsModal = (question) => {
+    const openDetailsModal = (question: any) => {
         setModalType('details');
 
         if (question._id !== undefined) {
@@ -162,6 +167,16 @@ const Questions = () => {
         setIsModalOpen(false);
         setModalType('add'); // Reset modal type to 'add' when closing
     };
+
+    // Filter questions based on search term
+    const filteredQuestions = data ? data.filter((q: any) => {
+        const term = searchTerm.toLowerCase();
+        return (
+            q.title?.toLowerCase().includes(term) ||
+            (q.tags && q.tags.some((tag: string) => tag.toLowerCase().includes(term))) ||
+            (q.type && q.type.toLowerCase().includes(term))
+        );
+    }) : [];
 
     return (
         <>
@@ -185,6 +200,15 @@ const Questions = () => {
                 </button>
             </div>
             <div className="flex justify-center">
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Search questions by title, tag, or type..."
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded"
+                    />
+                </div>
                 <table className="border-separate border-spacing-1 table-fixed w-10/12">
                     <thead>
                         <tr>
@@ -193,6 +217,7 @@ const Questions = () => {
                             <th className="border border-slate-400 px-2 bg-black text-white">Right Answer</th>
                             <th className="border border-slate-400 px-2 bg-black text-white">Difficulty Level</th>
                             <th className="border border-slate-400 px-2 bg-black text-white">Type</th>
+                            <th className="border border-slate-400 px-2 bg-black text-white">Tags</th>
                             {/* Add more header columns as needed */}
                             <th className="border border-slate-400 px-2 rounded-r-md bg-black text-white">Actions</th>
                         </tr>
@@ -208,7 +233,7 @@ const Questions = () => {
                                 <td colSpan="3">Error: {error}</td>
                             </tr>
                         )}
-                        {data && data.map((question) => (
+                        {filteredQuestions && filteredQuestions.map((question) => (
                             <tr key={question._id}>
                                 <td className="border border-slate-300 px-2 rounded-l-md">{question?.title}</td>
                                 <td className="border border-slate-400 px-2">{question?.description}</td>
@@ -216,6 +241,7 @@ const Questions = () => {
                                 <td className="border border-slate-400 px-2">{question?.difficulty}</td>
 
                                 <td className="border border-slate-400 px-2 rounded-r-md">{question.type}</td>
+                                <td className="border border-slate-400 px-2">{question.tags && question.tags.join(', ')}</td>
                                 {/* <td className="border border-slate-400 px-2 rounded-r-md " >
 
                                     <EyeIcon className="h-6 w-6 text-yellow-500" />
@@ -303,57 +329,69 @@ const Questions = () => {
                         </div>
                     </div> */}
                     <div className="mb-4">
-                        <label className="block text-gray-700 font-bold mb-2">Answers A, B, C, and D:</label>
-                        <div className="flex">
-                            <input {...register("options.A", { required: "First option is required" })} type="text" placeholder="A" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                            {errors.options?.A && <p className="text-red-500">{errors.options.A.message}</p>}
-
-                            <input {...register("options.B", { required: "Second option is required" })} type="text" placeholder="B" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                            {errors.options?.B && <p className="text-red-500">{errors.options.B.message}</p>}
-
-                            <input {...register("options.C", { required: "Third option is required" })} type="text" placeholder="C" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                            {errors.options?.C && <p className="text-red-500">{errors.options.C.message}</p>}
-
-                            <input {...register("options.D", { required: "Fourth option is required" })} type="text" placeholder="D" className="w-1/4 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                            {errors.options?.D && <p className="text-red-500">{errors.options.D.message}</p>}
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 font-bold mb-2">Correct Answer:</label>
-                        <input {...register("answer", { required: true })} type="text" id="correctAnswer" className="w-full border p-2 rounded
-                                     focus:outline-none focus:border-blue-500"/>
-                        {errors.answer && <p className="text-red-500">{errors.answer.message}</p>}
-
-                    </div>
-
-                    <div className="mb-4">
                         <div className='flex'>
                             <label className="block text-gray-700 font-bold mb-2">Type:</label>
                             <select
-                                {...register("type", { required: "type is required" })} id="dropdown" className="w-full border p-2 rounded focus:outline-none focus:border-blue-500">
-                                <option value="" disabled selected>Select Type</option>
+                                {...register("type", { required: "type is required" })}
+                                id="dropdown"
+                                className="w-full border p-2 rounded focus:outline-none focus:border-blue-500"
+                                onChange={e => setSelectedType(e.target.value)}
+                                value={selectedType}
+                            >
+                                <option value="MCQ">Multiple Choice</option>
+                                <option value="TRUE_FALSE">True/False</option>
                                 <option value="BE">BE</option>
                                 <option value="FE">FE</option>
                                 <option value="DO">DO</option>
                             </select>
                             {errors.type && <p className="text-red-500">{errors.type.message}</p>}
-
-                            {/*  */}
-                            <label className="block text-gray-700 font-bold mb-2">Difficulty:</label>
+                            <label className="block text-gray-700 font-bold mb-2 ml-4">Difficulty:</label>
                             <select
-
-                                {...register("difficulty", { required: "type is required" })} id="dropdown" className="w-full border p-2 rounded focus:outline-none focus:border-blue-500">
-                                <option value="" disabled selected>Select Difficulty Level</option>
+                                {...register("difficulty", { required: "type is required" })}
+                                id="dropdown"
+                                className="w-full border p-2 rounded focus:outline-none focus:border-blue-500"
+                            >
+                                <option value="" disabled>Select Difficulty Level</option>
                                 <option value="easy">Easy</option>
                                 <option value="medium">Medium</option>
                                 <option value="hard">Hard</option>
                             </select>
                             {errors.difficulty && <p className="text-red-500">{errors.difficulty.message}</p>}
-
                         </div>
 
                     </div>
+                    {selectedType === 'MCQ' ? (
+                        <div className="mb-4">
+                            <label className="block text-gray-700 font-bold mb-2">Answers A, B, C, and D:</label>
+                            <div className="flex">
+                                <input {...register("options.A", { required: "First option is required" })} type="text" placeholder="A" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
+                                {errors.options?.A && <p className="text-red-500">{errors.options.A.message}</p>}
 
+                                <input {...register("options.B", { required: "Second option is required" })} type="text" placeholder="B" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
+                                {errors.options?.B && <p className="text-red-500">{errors.options.B.message}</p>}
+
+                                <input {...register("options.C", { required: "Third option is required" })} type="text" placeholder="C" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
+                                {errors.options?.C && <p className="text-red-500">{errors.options.C.message}</p>}
+
+                                <input {...register("options.D", { required: "Fourth option is required" })} type="text" placeholder="D" className="w-1/4 border p-2 rounded focus:outline-none focus:border-blue-500" />
+                                {errors.options?.D && <p className="text-red-500">{errors.options.D.message}</p>}
+                            </div>
+                        </div>
+                    ) : null}
+                    {selectedType === 'TRUE_FALSE' ? (
+                        <div className="mb-4">
+                            <label className="block text-gray-700 font-bold mb-2">Select Correct Answer:</label>
+                            <select {...register("answer", { required: true })} className="w-full border p-2 rounded focus:outline-none focus:border-blue-500">
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                            </select>
+                            {errors.answer && <p className="text-red-500">{errors.answer.message}</p>}
+                        </div>
+                    ) : null}
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-bold mb-2">Categories/Tags (comma separated):</label>
+                        <input {...register("tags")} type="text" placeholder="e.g. math, algebra, geometry" className="w-full border p-2 rounded focus:outline-none focus:border-blue-500" />
+                    </div>
                     {/* Add more content as needed */}
                 </SharedModal>
             )}

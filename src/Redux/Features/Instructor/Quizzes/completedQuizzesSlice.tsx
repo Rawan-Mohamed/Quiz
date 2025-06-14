@@ -3,13 +3,20 @@ import {  completedQuiz,requestHeaders } from "../../../../Services/api";
 import axios from "axios";
 
 
+export interface CompletedQuiz {
+  title: string;
+  status: string;
+  schadule: string;
+  participants: string;
+}
+
 export interface Props {
-  data: [];
+  data: CompletedQuiz[];
   loading: boolean;
   error: null | string;
 }
 
-export const fetchcompletedQuizzes = createAsyncThunk<any, void>(
+export const fetchcompletedQuizzes = createAsyncThunk<CompletedQuiz[], void>(
   "completQuizzesData/fetchcompletedQuizzes",
   async () => {
     // eslint-disable-next-line no-useless-catch
@@ -20,7 +27,7 @@ export const fetchcompletedQuizzes = createAsyncThunk<any, void>(
 
       });
 
-      return data.data;
+      return data.data as CompletedQuiz[];
 
 
     } catch (error) {
@@ -47,7 +54,7 @@ export const completedQuizzesSlice = createSlice({
     });
     builder.addCase(
         fetchcompletedQuizzes.fulfilled,
-      (state, action: PayloadAction<any>) => {
+      (state, action: PayloadAction<CompletedQuiz[]>) => {
         state.loading = false;
         state.data = action.payload;
         // state.data = true;
