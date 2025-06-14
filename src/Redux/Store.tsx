@@ -18,6 +18,7 @@ import quizzessReducer from "./Features/Instructor/Quizzes/getQuizzesSlice";
 import deleteQuizReducer from "./Features/Instructor/Quizzes/deleteQuizzesSlice";
 import incommingQuizdeleteQuiz from "./Features/Instructor/Quizzes/incommingQuizSlice";
 import completedQuizdeleteQuiz from "./Features/Instructor/Quizzes/completedQuizzesSlice";
+import realTimeQuizReducer from "./Features/Instructor/Quizzes/realTimeQuizSlice";
 
 import resultsDataReducer from "./Features/Instructor/Results/GetAllResultsSlice";
 
@@ -53,7 +54,11 @@ const store = configureStore({
     incommingStudentData: incommingStdentQuiz,
     resultsData: resultsDataReducer,
     sumbitedQuiz: submitQuizReducer,
+    realTimeQuiz: realTimeQuizReducer,
   },
 });
+
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
 
 export default store;
