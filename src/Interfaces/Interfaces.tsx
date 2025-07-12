@@ -27,4 +27,21 @@ export interface CustomLeftCardProps {
   status:string
   }
 
+  export interface IncommingQuiz {
+  _id: string;
+  title: string;
+  schadule: string;
+  duration: number;
+  participants: number;
+  image?: string;
+}
+
+export interface IncommingStudent {
+  _id: string;
+  first_name: string;
+  email: string;
+  status: string;
+  image?: string;
+}
+
 

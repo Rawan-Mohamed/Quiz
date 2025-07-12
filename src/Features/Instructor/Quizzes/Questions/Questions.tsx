@@ -13,6 +13,8 @@ import deleteImg from '../../../../assets/images/QuestionDeleteIcon.svg'
 import detailsImg from '../../../../assets/images/illust58-6486-01-removebg-preview.png'
 import style from './Questions.module.css'
 import { Link } from 'react-router-dom';
+import { FormContainer, FormSection, InputField, TextareaField, SelectField, FormIcons } from '../../../../Shared/CustomComponents/FormComponents/FormComponents';
+
 const Questions = () => {
     const dispatch = useDispatch();
     // Add types for useSelector state
@@ -285,114 +287,149 @@ const Questions = () => {
             {/* Add Modal */}
             {isModalOpen && modalType === 'add' && (
                 <SharedModal closeModal={closeModal} onSave={handleSubmit(handleCreateQuestion)} width="1/2" onHide={closeModal}>
-
-
-                    <div className="mb-4">
-                        <label className="block text-gray-700 font-bold mb-2">Title:</label>
-                        <input {...register("title", { required: "Title is required" })} type="text" id="title" className="w-full border p-2 rounded focus:outline-none focus:border-blue-500" />
-                        {errors.title && <p className="text-red-500">{errors.title.message}</p>}
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block text-gray-700 font-bold mb-2">Question Descruption:</label>
-                        <textarea {...register("description", { required: "description is required" })} id="question" className="w-full border p-2 rounded focus:outline-none focus:border-blue-500"></textarea>
-                        {errors.description && <p className="text-red-500">{errors.description.message}</p>}
-
-                    </div>
-                    {/*
-                    <div className="mb-4">
-                        <label className="block text-gray-700 font-bold mb-2">Answers A and B:</label>
-                        <div className="flex">
-                            <input {...register("A", { required: "First option is required" })} type="text" placeholder="A" className="w-1/2 mr-2 border p-2
-                                  rounded focus:outline-none focus:border-blue-500"/>
-                            {errors.A && <p className="text-red-500">{errors.A.message}</p>}
-
-                            <input {...register("B", { required: "Second option is required" })} type="text" placeholder="B" className="w-1/2 border p-2 rounded
-                                     focus:outline-none focus:border-blue-500"/>
-                            {errors.B && <p className="text-red-500">{errors.B.message}</p>}
-
-                        </div>
-                    </div>
-
-                    <div className="mb-4">
-
-                        <label className="block text-gray-700 font-bold mb-2">Answers C and D:</label>
-                        <div className="flex">
-                            <input {...register("C", { required: "Second option is required" })} type="text" placeholder="C" className="w-1/2 mr-2 border p-2 rounded
-                                     focus:outline-none focus:border-blue-500"/>
-                            {errors.C && <p className="text-red-500">{errors.C.message}</p>}
-
-                            <input {...register("D", { required: "thired option is required" })} type="text" placeholder="D" className="w-1/2 border p-2 rounded
-                                         focus:outline-none focus:border-blue-500"/>
-                            {errors.D && <p className="text-red-500">{errors.D.message}</p>}
-
-                        </div>
-                    </div> */}
-                    <div className="mb-4">
-                        <div className='flex'>
-                            <label className="block text-gray-700 font-bold mb-2">Type:</label>
-                            <select
-                                {...register("type", { required: "type is required" })}
-                                id="dropdown"
-                                className="w-full border p-2 rounded focus:outline-none focus:border-blue-500"
-                                onChange={e => setSelectedType(e.target.value)}
-                                value={selectedType}
-                            >
-                                <option value="MCQ">Multiple Choice</option>
-                                <option value="TRUE_FALSE">True/False</option>
-                                <option value="BE">BE</option>
-                                <option value="FE">FE</option>
-                                <option value="DO">DO</option>
-                            </select>
-                            {errors.type && <p className="text-red-500">{errors.type.message}</p>}
-                            <label className="block text-gray-700 font-bold mb-2 ml-4">Difficulty:</label>
-                            <select
-                                {...register("difficulty", { required: "type is required" })}
-                                id="dropdown"
-                                className="w-full border p-2 rounded focus:outline-none focus:border-blue-500"
-                            >
-                                <option value="" disabled>Select Difficulty Level</option>
-                                <option value="easy">Easy</option>
-                                <option value="medium">Medium</option>
-                                <option value="hard">Hard</option>
-                            </select>
-                            {errors.difficulty && <p className="text-red-500">{errors.difficulty.message}</p>}
+                    <div className="bg-white dark:bg-neutral-800 rounded-xl p-6">
+                        <div className="mb-6">
+                            <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+                                Create New Question
+                            </h3>
+                            <p className="text-neutral-600 dark:text-neutral-400">
+                                Add a new question to your quiz bank with detailed options and settings
+                            </p>
                         </div>
 
+                        <FormContainer>
+                            <FormSection>
+                                <InputField
+                                    label="Question Title"
+                                    name="title"
+                                    placeholder="Enter the question title"
+                                    icon={FormIcons.tag}
+                                    required
+                                    {...register("title", { required: "Title is required" })}
+                                    error={errors.title?.message}
+                                />
+
+                                <TextareaField
+                                    label="Question Description"
+                                    name="description"
+                                    placeholder="Provide a detailed description of the question"
+                                    rows={4}
+                                    required
+                                    {...register("description", { required: "Description is required" })}
+                                    error={errors.description?.message}
+                                />
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <SelectField
+                                        label="Question Type"
+                                        name="type"
+                                        options={[
+                                            { value: "MCQ", label: "Multiple Choice" },
+                                            { value: "TRUE_FALSE", label: "True/False" },
+                                            { value: "BE", label: "Backend" },
+                                            { value: "FE", label: "Frontend" },
+                                            { value: "DO", label: "DevOps" }
+                                        ]}
+                                        placeholder="Select question type"
+                                        icon={FormIcons.tag}
+                                        required
+                                        {...register("type", { required: "Type is required" })}
+                                        error={errors.type?.message}
+                                        onChange={(e) => {
+                                            setSelectedType(e.target.value);
+                                            register("type").onChange(e);
+                                        }}
+                                    />
+
+                                    <SelectField
+                                        label="Difficulty Level"
+                                        name="difficulty"
+                                        options={[
+                                            { value: "easy", label: "Easy" },
+                                            { value: "medium", label: "Medium" },
+                                            { value: "hard", label: "Hard" }
+                                        ]}
+                                        placeholder="Select difficulty"
+                                        icon={FormIcons.tag}
+                                        required
+                                        {...register("difficulty", { required: "Difficulty is required" })}
+                                        error={errors.difficulty?.message}
+                                    />
+                                </div>
+
+                                {selectedType === 'MCQ' && (
+                                    <div className="space-y-4">
+                                        <h4 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                                            Multiple Choice Options
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <InputField
+                                                label="Option A"
+                                                name="options.A"
+                                                placeholder="Enter option A"
+                                                required
+                                                {...register("options.A", { required: "Option A is required" })}
+                                                error={errors.options?.A?.message}
+                                            />
+                                            <InputField
+                                                label="Option B"
+                                                name="options.B"
+                                                placeholder="Enter option B"
+                                                required
+                                                {...register("options.B", { required: "Option B is required" })}
+                                                error={errors.options?.B?.message}
+                                            />
+                                            <InputField
+                                                label="Option C"
+                                                name="options.C"
+                                                placeholder="Enter option C"
+                                                required
+                                                {...register("options.C", { required: "Option C is required" })}
+                                                error={errors.options?.C?.message}
+                                            />
+                                            <InputField
+                                                label="Option D"
+                                                name="options.D"
+                                                placeholder="Enter option D"
+                                                required
+                                                {...register("options.D", { required: "Option D is required" })}
+                                                error={errors.options?.D?.message}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {selectedType === 'TRUE_FALSE' && (
+                                    <div className="space-y-4">
+                                        <h4 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                                            True/False Answer
+                                        </h4>
+                                        <SelectField
+                                            label="Correct Answer"
+                                            name="answer"
+                                            options={[
+                                                { value: "true", label: "True" },
+                                                { value: "false", label: "False" }
+                                            ]}
+                                            placeholder="Select correct answer"
+                                            required
+                                            {...register("answer", { required: "Answer is required" })}
+                                            error={errors.answer?.message}
+                                        />
+                                    </div>
+                                )}
+
+                                <InputField
+                                    label="Tags/Categories"
+                                    name="tags"
+                                    placeholder="e.g., math, algebra, geometry (comma separated)"
+                                    icon={FormIcons.tag}
+                                    {...register("tags")}
+                                    error={errors.tags?.message}
+                                />
+                            </FormSection>
+                        </FormContainer>
                     </div>
-                    {selectedType === 'MCQ' ? (
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-bold mb-2">Answers A, B, C, and D:</label>
-                            <div className="flex">
-                                <input {...register("options.A", { required: "First option is required" })} type="text" placeholder="A" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                                {errors.options?.A && <p className="text-red-500">{errors.options.A.message}</p>}
-
-                                <input {...register("options.B", { required: "Second option is required" })} type="text" placeholder="B" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                                {errors.options?.B && <p className="text-red-500">{errors.options.B.message}</p>}
-
-                                <input {...register("options.C", { required: "Third option is required" })} type="text" placeholder="C" className="w-1/4 mr-2 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                                {errors.options?.C && <p className="text-red-500">{errors.options.C.message}</p>}
-
-                                <input {...register("options.D", { required: "Fourth option is required" })} type="text" placeholder="D" className="w-1/4 border p-2 rounded focus:outline-none focus:border-blue-500" />
-                                {errors.options?.D && <p className="text-red-500">{errors.options.D.message}</p>}
-                            </div>
-                        </div>
-                    ) : null}
-                    {selectedType === 'TRUE_FALSE' ? (
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-bold mb-2">Select Correct Answer:</label>
-                            <select {...register("answer", { required: true })} className="w-full border p-2 rounded focus:outline-none focus:border-blue-500">
-                                <option value="true">True</option>
-                                <option value="false">False</option>
-                            </select>
-                            {errors.answer && <p className="text-red-500">{errors.answer.message}</p>}
-                        </div>
-                    ) : null}
-                    <div className="mb-4">
-                        <label className="block text-gray-700 font-bold mb-2">Categories/Tags (comma separated):</label>
-                        <input {...register("tags")} type="text" placeholder="e.g. math, algebra, geometry" className="w-full border p-2 rounded focus:outline-none focus:border-blue-500" />
-                    </div>
-                    {/* Add more content as needed */}
                 </SharedModal>
             )}
 

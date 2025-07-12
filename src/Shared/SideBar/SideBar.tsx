@@ -4,24 +4,26 @@ import { useNavigate, Link } from "react-router-dom";
 import styles from "./SideBar.module.css";
 import "tailwindcss/tailwind.css";
 
-import { useDispatch } from "react-redux";
-import { logoutUser } from '../../Redux/Features/Auth/LogoutSlice'
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from '../../Redux/Features/Auth/LogoutSlice';
+import { AppDispatch, RootState } from '../../Redux/Store';
 
-import { useSelector } from "react-redux";
+interface SideBarProps {
+  onClose?: () => void;
+}
 
-
-const SideBar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+const SideBar: React.FC<SideBarProps> = ({ onClose }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
 
   // Fetching user role from Redux store
-  const userRole = useSelector((state) => state.users.role); // Assuming 'users' is the slice name where the user role is stored
+  const userRole = useSelector((state: RootState) => state.users.role);
 
-  // modal
   const handleToggle = () => {
     setIsCollapsed(!isCollapsed);
   };
-  const dispatch = useDispatch();
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -31,262 +33,176 @@ const SideBar = () => {
     navigate("/login");
   };
 
+  const handleMenuItemClick = () => {
+    // Close sidebar on mobile when menu item is clicked
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <>
-      <Sidebar collapsed={isCollapsed} className={` ${styles["bg-sidbar"]}`}>
-        {userRole &&(
-          <Menu>
+    <div className="h-full bg-white dark:bg-neutral-800 border-r border-neutral-200 dark:border-neutral-700">
+      <Sidebar 
+        collapsed={isCollapsed} 
+        className="bg-white dark:bg-neutral-800 border-none"
+        width="320px"
+        collapsedWidth="80px"
+      >
+        {userRole && (
+          <Menu className="bg-white dark:bg-neutral-800">
+            {/* Header with toggle button */}
             <MenuItem
-              style={{ height: "63px" }}
-              className="border-b border-gray-500 pb-1 br-2 "
+              className="h-16 border-b border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
               onClick={handleToggle}
             >
-              <div className="flex items-center">
-                <i className={`font-bold ${styles["bold-and-large"]}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                  </svg>
-                </i>
-                <i className={`font-bold ${styles["bold-and-large"]}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                  </svg>
-                </i>
+              <div className="flex items-center justify-center w-full">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  {!isCollapsed && (
+                    <span className="font-semibold text-lg text-neutral-900 dark:text-neutral-100">
+                      QuizWiz
+                    </span>
+                  )}
+                </div>
               </div>
             </MenuItem>
+
+            {/* Dashboard */}
             <MenuItem
-              className={styles["bg-menu-item"]}
+              className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
               icon={
-                <i className={`mr-6 ${styles["bg-icon"]}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
-                    <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
+                <div className="w-6 h-6 text-neutral-600 dark:text-neutral-300">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                   </svg>
-                </i>
+                </div>
               }
-              component={<Link to="/dashboard" />}
+              component={<Link to="/dashboard" onClick={handleMenuItemClick} />}
             >
-              Dashboard
+              {!isCollapsed && (
+                <span className="text-neutral-700 dark:text-neutral-300 font-medium">Dashboard</span>
+              )}
             </MenuItem>
-            {userRole === "Instructor"  ? (
+
+            {/* Instructor-specific menu items */}
+            {userRole === "Instructor" && (
               <>
                 <MenuItem
-                  className={styles["bg-menu-item"]}
+                  className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
                   icon={
-                    <i className={`mr-6 ${styles["bg-icon"]}`}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+                    <div className="w-6 h-6 text-neutral-600 dark:text-neutral-300">
+                      <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
                       </svg>
-                    </i>
+                    </div>
                   }
-                  component={<Link to="/dashboard/students" />}
+                  component={<Link to="/dashboard/students" onClick={handleMenuItemClick} />}
                 >
-                  Students
+                  {!isCollapsed && (
+                    <span className="text-neutral-700 dark:text-neutral-300 font-medium">Students</span>
+                  )}
                 </MenuItem>
+
                 <MenuItem
-                  className={styles["bg-menu-item"]}
+                  className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
                   icon={
-                    <i className={`mr-6 ${styles["bg-icon"]}`}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z"
-                          clipRule="evenodd"
-                        />
-                        <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
+                    <div className="w-6 h-6 text-neutral-600 dark:text-neutral-300">
+                      <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
-                    </i>
+                    </div>
                   }
-                  component={<Link to="/dashboard/groups" />}
+                  component={<Link to="/dashboard/groups" onClick={handleMenuItemClick} />}
                 >
-                  Groups
+                  {!isCollapsed && (
+                    <span className="text-neutral-700 dark:text-neutral-300 font-medium">Groups</span>
+                  )}
                 </MenuItem>
               </>
-            ) : (
-              ""
             )}
 
-            {userRole === "Instructor" ? (
-              <MenuItem
-                className={styles["bg-menu-item"]}
-                icon={
-                  <i className={` mr-6 ${styles["bg-icon"]}`}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.5 3.798v5.02a3 3 0 0 1-.879 2.121l-2.377 2.377a9.845 9.845 0 0 1 5.091 1.013 8.315 8.315 0 0 0 5.713.636l.285-.071-3.954-3.955a3 3 0 0 1-.879-2.121v-5.02a23.614 23.614 0 0 0-3 0Zm4.5.138a.75.75 0 0 0 .093-1.495A24.837 24.837 0 0 0 12 2.25a25.048 25.048 0 0 0-3.093.191A.75.75 0 0 0 9 3.936v4.882a1.5 1.5 0 0 1-.44 1.06l-6.293 6.294c-1.62 1.621-.903 4.475 1.471 4.88 2.686.46 5.447.698 8.262.698 2.816 0 5.576-.239 8.262-.697 2.373-.406 3.092-3.26 1.47-4.881L15.44 9.879A1.5 1.5 0 0 1 15 8.818V3.936Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </i>
-                }
-                component={<Link to="/dashboard/quizzes" />}
-              >
-                Quizzes
-              </MenuItem>
-            ) : (
-              <MenuItem
-                className={styles["bg-menu-item"]}
-                icon={
-                  <i className={` mr-6 ${styles["bg-icon"]}`}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.5 3.798v5.02a3 3 0 0 1-.879 2.121l-2.377 2.377a9.845 9.845 0 0 1 5.091 1.013 8.315 8.315 0 0 0 5.713.636l.285-.071-3.954-3.955a3 3 0 0 1-.879-2.121v-5.02a23.614 23.614 0 0 0-3 0Zm4.5.138a.75.75 0 0 0 .093-1.495A24.837 24.837 0 0 0 12 2.25a25.048 25.048 0 0 0-3.093.191A.75.75 0 0 0 9 3.936v4.882a1.5 1.5 0 0 1-.44 1.06l-6.293 6.294c-1.62 1.621-.903 4.475 1.471 4.88 2.686.46 5.447.698 8.262.698 2.816 0 5.576-.239 8.262-.697 2.373-.406 3.092-3.26 1.47-4.881L15.44 9.879A1.5 1.5 0 0 1 15 8.818V3.936Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </i>
-                }
-                component={<Link to="/dashboard/learnerquiz" />}
-              >
-                Quizzes
-              </MenuItem>
-            )}
+            {/* Quizzes - different for Instructor and Student */}
             <MenuItem
-              className={styles["bg-menu-item"]}
+              className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
               icon={
-                <i className={` mr-6 ${styles["bg-icon"]}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z"
-                      clipRule="evenodd"
-                    />
-                    <path
-                      fillRule="evenodd"
-                      d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375ZM6 12a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V12Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 15a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V15Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 18a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V18Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75Z"
-                      clipRule="evenodd"
-                    />
+                <div className="w-6 h-6 text-neutral-600 dark:text-neutral-300">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                </i>
+                </div>
               }
-              component={<Link to="/dashboard/results" />}
+              component={
+                <Link 
+                  to={userRole === "Instructor" ? "/dashboard/quizzes" : "/dashboard/learnerquiz"} 
+                  onClick={handleMenuItemClick} 
+                />
+              }
             >
-              Results
+              {!isCollapsed && (
+                <span className="text-neutral-700 dark:text-neutral-300 font-medium">Quizzes</span>
+              )}
             </MenuItem>
 
+            {/* Results */}
             <MenuItem
-              className={styles["bg-menu-item"]}
-              // onClick={handleShow}
+              className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
               icon={
-                <i className={`mr-6 ${styles["bg-icon"]}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path d="M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 0 1-1.5 0V6.75a3.75 3.75 0 1 0-7.5 0v3a3 3 0 0 1 3 3v6.75a3 3 0 0 1-3 3H3.75a3 3 0 0 1-3-3v-6.75a3 3 0 0 1 3-3h9v-3c0-2.9 2.35-5.25 5.25-5.25Z" />
+                <div className="w-6 h-6 text-neutral-600 dark:text-neutral-300">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
                   </svg>
-                </i>
+                </div>
               }
-              component={<Link to="/change-password" />}
+              component={<Link to="/dashboard/results" onClick={handleMenuItemClick} />}
             >
-              Change Pass
+              {!isCollapsed && (
+                <span className="text-neutral-700 dark:text-neutral-300 font-medium">Results</span>
+              )}
             </MenuItem>
 
-            <MenuItem
-              className={styles["bg-menu-item"]}
-              onClick={handleLogout}
-              icon={
-                <i className={`mr-6 ${styles["bg-icon"]}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12 2.25a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM6.166 5.106a.75.75 0 0 1 0 1.06 8.25 8.25 0 1 0 11.668 0 .75.75 0 1 1 1.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 0 1 1.06 0Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </i>
-              }
-              component={<Link to="/login" />}
-            >
-              Logout
-            </MenuItem>
-            <MenuItem
-              className={`place-self-end ${styles["bg-menu-item"]}`}
-              icon={
-                <i className={` mr-6 ${styles["bg-icon"]}`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </i>
-              }
-              component={<Link to="/login" />}
-            >
-              Help
-            </MenuItem>
+            {/* Settings section */}
+            <div className="mt-auto pt-4 border-t border-neutral-200 dark:border-neutral-700">
+              <MenuItem
+                className="hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+                icon={
+                  <div className="w-6 h-6 text-neutral-600 dark:text-neutral-300">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                }
+                component={<Link to="/change-password" onClick={handleMenuItemClick} />}
+              >
+                {!isCollapsed && (
+                  <span className="text-neutral-700 dark:text-neutral-300 font-medium">Settings</span>
+                )}
+              </MenuItem>
+
+              <MenuItem
+                className="hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors"
+                icon={
+                  <div className="w-6 h-6 text-error-600 dark:text-error-400">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                }
+                onClick={handleLogout}
+              >
+                {!isCollapsed && (
+                  <span className="text-error-600 dark:text-error-400 font-medium">Logout</span>
+                )}
+              </MenuItem>
+            </div>
           </Menu>
         )}
       </Sidebar>
-    </>
+    </div>
   );
 };
 
